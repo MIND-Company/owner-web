@@ -13,7 +13,7 @@ export const LoginPage = () => {
 	const checkResponse = function () {
 		async function getResponse() {
 			const response = await fetch(
-				`${path}`,
+				`${path}/login`,
 				{
 					headers: {
 						Authorization:
@@ -22,13 +22,10 @@ export const LoginPage = () => {
 				},
 			);
 
-			// Моки
-			const login = 'login';
-			const password = '123';
-			// Моки
+			const data = await response.json();
 
-			if (currentLogin === login && currentPassword === password) {
-				navigate('/parkings');
+			if (response.ok) {
+				navigate('/parkings', {state: data});
 				localStorage.setItem(
 					'token',
 					encodingToB64(currentLogin + ':' + currentPassword),
@@ -40,22 +37,6 @@ export const LoginPage = () => {
 
 		getResponse();
 	};
-
-	//   Const data = await response.json();
-
-	//       if (response.ok) {
-	//         navigate("/parkings", { state: data });
-	//         localStorage.setItem(
-	//           "token",
-	//           encodingToB64(currentLogin + ":" + currentPassword)
-	//         );
-	//       } else {
-	//         setError(true);
-	//       }
-	//     }
-
-	//     getResponse();
-	//   };
 
 	const handleChangeLogin = (event: {target: {value: React.SetStateAction<string>}}) => {
 		setCurrentLogin(event.target.value);
