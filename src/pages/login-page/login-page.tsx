@@ -12,17 +12,20 @@ export const LoginPage = () => {
 
 	const checkResponse = function () {
 		async function getResponse() {
-			const response = await fetch(
-				`${path}/login`,
+			const response = await fetch('login',
 				{
+					method: 'POST',
 					headers: {
-						Authorization:
-              'Auth ' + encodingToB64(currentLogin + ':' + currentPassword),
+						'Content-Type': 'application/json',
 					},
+					body: JSON.stringify({
+						phone: currentLogin,
+						password: currentPassword,
+					}),
 				},
 			);
 
-			const data = await response.json();
+			const data = await response.json() as {access: string; refresh: string};
 
 			if (response.ok) {
 				navigate('/parkings', {state: data});
