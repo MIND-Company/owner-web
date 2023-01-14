@@ -1,0 +1,22 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.item {
+    margin-top: 20px;
+    box-shadow: 0 0 28px 0 rgba(0, 0, 0, 0.08);
+    width: 500px;
+    height: 100px;
+    background-color: #ffffff;
+    border-radius: 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.item > * {
+    margin-bottom: 10px;
+}
