@@ -3,22 +3,36 @@ import {
   IParkingDetailed,
   IPrice,
 } from '../../../../../../models/parking-detailed.model';
-import React, { useEffect } from 'react';
-import { FC } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParking } from '../../hooks/parking.hook';
 import { useParams } from 'react-router-dom';
-import { useUpgradedState } from '@ermolaev/mind-ui';
+import { Button, useUpgradedState } from '@ermolaev/mind-ui';
 import classes from './Transport.styles.module.css';
 
 export const TransportContainer = () => {
   const parkingApi = useParking();
   const param = useParams();
-  const parking = useUpgradedState<IParkingDetailed | null>(null);
+  const parking = useUpgradedState<any | null>(null);
+  const [pParkings, setPParkings] = useState([]);
+  const [isShow, setShow] = useState(false);
 
   useEffect(() => {
     if (param.id) {
       parkingApi(parseInt(param.id)).then((parkingModel: IParkingDetailed) => {
-        parking.setValue(parkingModel);
+        const a: any[] = [];
+        const b: any[] = [];
+
+        parkingModel.cars.forEach((v) => {
+          if (v.checkoutTime) {
+            b.push(v);
+            return;
+          }
+
+          a.push(v);
+        });
+
+        parking.setValue(a as any);
+        setPParkings(b as any);
       });
     }
   }, []);
@@ -26,7 +40,7 @@ export const TransportContainer = () => {
   if (parking) {
     return (
       <div className={classes.container}>
-        {parking.value?.cars.map((el, index) => {
+        {parking.value?.map((el: any, index: number) => {
           return (
             <div className={classes.item} key={index}>
               <div>Номер ТС: {el.plate}</div>
@@ -34,6 +48,25 @@ export const TransportContainer = () => {
             </div>
           );
         })}
+        <Button
+          title={`${isShow ? 'Скрыть' : 'Показать'}  прошедшие паркинги`}
+          onClick={() => setShow(!isShow)}
+        />
+        {isShow &&
+          pParkings.map((el: any, index) => {
+            return (
+              <div className={classes.item} key={index}>
+                <div>Номер ТС: {el.plate}</div>
+                <div>
+                  Время въезда: {new Date(el.entryTime).toLocaleString()}
+                </div>
+                <div>
+                  Время выезда: {new Date(el.checkoutTime).toLocaleString()}
+                </div>
+                <div>Сумма: {el.calculatedPrice}₽</div>
+              </div>
+            );
+          })}
       </div>
     );
   }
